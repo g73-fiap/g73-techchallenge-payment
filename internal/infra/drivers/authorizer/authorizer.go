@@ -3,6 +3,7 @@ package authorizer
 import (
 	"encoding/json"
 	"errors"
+
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/http"
 )

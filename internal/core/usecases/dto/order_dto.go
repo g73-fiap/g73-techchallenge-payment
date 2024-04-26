@@ -2,9 +2,9 @@ package dto
 
 import (
 	"fmt"
-	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"time"
 
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/asaskevich/govalidator"
 )
 

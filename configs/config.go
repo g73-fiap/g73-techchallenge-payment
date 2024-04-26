@@ -14,18 +14,6 @@ type Config struct {
 type AppConfig struct {
 	Environment string
 
-	DatabaseHost     string
-	DatabasePort     string
-	DatabaseName     string
-	DatabaseUser     string
-	DatabasePassword string
-	DatabaseSSLMode  string
-
-	AuthorizerURL string
-
-	SQSRegion   string
-	SQSEndpoint string
-
 	PaymentBrokerURL string
 	NotificationURL  string
 	SponsorId        string
@@ -84,15 +72,6 @@ func (c *Config) extractConfigVars() (AppConfig, error) {
 	appConfig := AppConfig{}
 
 	appConfig.Environment = c.viper.GetString("ENVIRONMENT")
-
-	appConfig.DatabaseHost = c.viper.GetString("POSTGRES_HOST")
-	appConfig.DatabasePort = c.viper.GetString("POSTGRES_PORT")
-	appConfig.DatabaseName = c.viper.GetString("POSTGRES_DB")
-	appConfig.DatabaseSSLMode = c.viper.GetString("POSTGRES_SSLMODE")
-	appConfig.DatabaseUser = c.viper.GetString("POSTGRES_USER")
-	appConfig.DatabasePassword = c.viper.GetString("POSTGRES_PASSWORD")
-
-	appConfig.AuthorizerURL = c.viper.GetString("AUTHORIZER_URL")
 
 	appConfig.PaymentBrokerURL = c.viper.GetString("paymentBroker.url")
 	appConfig.NotificationURL = c.viper.GetString("paymentBroker.notificationUrl")

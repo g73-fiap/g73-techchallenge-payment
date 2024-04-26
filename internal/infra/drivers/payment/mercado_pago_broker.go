@@ -3,6 +3,7 @@ package payment
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/http"
 )

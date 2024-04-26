@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"strconv"
 
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/gin-gonic/gin"
 )
 

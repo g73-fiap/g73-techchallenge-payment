@@ -2,6 +2,7 @@ package gateways
 
 import (
 	"fmt"
+
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/sql"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/sqlscripts"
