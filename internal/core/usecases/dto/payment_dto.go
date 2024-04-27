@@ -6,13 +6,10 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-type PaymentRequest struct {
-	ExternalReference string               `json:"external_reference"`
-	Title             string               `json:"title"`
-	NotificationURL   string               `json:"notification_url"`
-	TotalAmount       float64              `json:"total_amount"`
-	Items             []PaymentItemRequest `json:"items"`
-	Sponsor           string               `json:"sponsor"`
+type PaymentQRCodeRequest struct {
+	OrderId     int                  `json:"orderId"`
+	Items       []PaymentItemRequest `json:"items"`
+	TotalAmount float64              `json:"totalAmount"`
 }
 
 type PaymentItemRequest struct {
