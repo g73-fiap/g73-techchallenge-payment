@@ -1,9 +1,6 @@
 package usecases
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
@@ -50,25 +47,23 @@ func (u paymentUsecase) createPaymentRequest(order entities.Order) dto.PaymentQR
 	}
 
 	return dto.PaymentQRCodeRequest{
-		ExternalReference: strconv.FormatUint(uint64(order.ID), 10),
-		Title:             fmt.Sprintf("Order %d for the Customer[%d]", order.ID, order.Customer.ID),
-		NotificationURL:   fmt.Sprintf("%s/orders/%d/payment", u.notificationUrl, order.ID),
-		TotalAmount:       order.TotalAmount,
-		Items:             items,
-		Sponsor:           u.sponsorId,
+		OrderId:     order.ID,
+		Items:       items,
+		TotalAmount: order.TotalAmount,
 	}
 }
 
 func createPaymentItem(item entities.OrderItem) dto.PaymentItemRequest {
 	paymentItem := dto.PaymentItemRequest{
-		SkuNumber:   item.Product.SkuId,
-		Category:    item.Product.Category,
-		Title:       item.Product.Name,
-		Description: item.Product.Description,
-		UnitPrice:   item.Product.Price,
-		Quantity:    item.Quantity,
-		UnitMeasure: getUnitMeasure(item.Type),
-		TotalAmount: item.Product.Price * float64(item.Quantity),
+		Quantity: item.Quantity,
+		Product: dto.PaymentProductRequest{
+			Name:        item.Product.Name,
+			SkuId:       item.Product.SkuId,
+			Description: item.Product.Description,
+			Category:    item.Product.Category,
+			Type:        item.Type,
+			Price:       item.Product.Price,
+		},
 	}
 
 	return paymentItem

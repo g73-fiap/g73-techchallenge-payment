@@ -6,7 +6,7 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-type PaymentQRCodeRequest struct {
+type PaymentRequest struct {
 	ExternalReference string               `json:"external_reference"`
 	Title             string               `json:"title"`
 	NotificationURL   string               `json:"notification_url"`
@@ -16,14 +16,17 @@ type PaymentQRCodeRequest struct {
 }
 
 type PaymentItemRequest struct {
-	SkuNumber   string  `json:"sku_number"`
-	Category    string  `json:"category"`
-	Title       string  `json:"title"`
+	Quantity int                   `json:"quantity"`
+	Product  PaymentProductRequest `json:"product"`
+}
+
+type PaymentProductRequest struct {
+	Name        string  `json:"name"`
+	SkuId       string  `json:"skuId"`
 	Description string  `json:"description"`
-	UnitPrice   float64 `json:"unit_price"`
-	Quantity    int     `json:"quantity"`
-	UnitMeasure string  `json:"unit_measure"`
-	TotalAmount float64 `json:"total_amount"`
+	Category    string  `json:"category"`
+	Type        string  `json:"type"`
+	Price       float64 `json:"price"`
 }
 
 type SponsorRequest struct {
