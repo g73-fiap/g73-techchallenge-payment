@@ -10,7 +10,7 @@ func NewApi(paymenteControler controllers.PaymentController) *gin.Engine {
 	router := gin.Default()
 	v1 := router.Group("/v1")
 	{
-		v1.PUT("/orders/:id/payment", paymenteControler.PaymentHandler)
+		v1.POST("/payment", paymenteControler.PaymentHandler)
 
 	}
 	return router

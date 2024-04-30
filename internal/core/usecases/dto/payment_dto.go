@@ -1,63 +1,46 @@
 package dto
 
 import (
-	"time"
-
 	"github.com/asaskevich/govalidator"
 )
 
-type PaymentQRCodeRequest struct {
-	OrderId     int                  `json:"orderId"`
-	Items       []PaymentItemRequest `json:"items"`
-	TotalAmount float64              `json:"totalAmount"`
+type PaymentOrder struct {
+	OrderId     int                `json:"orderId" valid:"required~OrderId is required"`
+	CustomerCPF string             `json:"customerCPF" valid:"required~Customer CPF is required"`
+	Items       []PaymentOrderItem `json:"items"  valid:"required~Items list is required"`
+	TotalAmount float64            `json:"totalAmount"  valid:"float,required~TotalAmount is required"`
 }
 
-type PaymentItemRequest struct {
-	Quantity int                   `json:"quantity"`
-	Product  PaymentProductRequest `json:"product"`
+type PaymentOrderItem struct {
+	Quantity int              `json:"quantity" valid:"required~Quantity is required"`
+	Product  OrderItemProduct `json:"product" valid:"required~Product is required"`
 }
 
-type PaymentProductRequest struct {
-	Name        string  `json:"name"`
-	SkuId       string  `json:"skuId"`
+type OrderItemType string
+
+const (
+	OrderItemTypeUnit        OrderItemType = "UNIT"
+	OrderItemTypeCombo       OrderItemType = "COMBO"
+	OrderItemTypeCustomCombo OrderItemType = "CUSTOM_COMBO"
+)
+
+type OrderItemProduct struct {
+	Name        string  `json:"name" valid:"required~Product name is required"`
+	SkuId       string  `json:"skuId" valid:"required~Product skuId is required"`
 	Description string  `json:"description"`
-	Category    string  `json:"category"`
-	Type        string  `json:"type"`
-	Price       float64 `json:"price"`
+	Category    string  `json:"category" valid:"required~Product category is required"`
+	Type        string  `json:"type" valid:"required~Product type is required"`
+	Price       float64 `json:"price" valid:"required~Product price is required"`
 }
 
-type SponsorRequest struct {
-	Id string `json:"id"`
-}
-
-type PaymentQRCodeResponse struct {
-	QrData       string `json:"qr_data"`
-	StoreOrderId string `json:"in_store_order_id"`
-}
-
-type PaymentQRCode struct {
-	QRCode string `json:"qrcode"`
-}
-
-type PaymentNotificationDTO struct {
-	Id          string      `json:"id"`
-	LiveMode    bool        `json:"liveMode"`
-	Type        string      `json:"type" valid:"in(payment),required~Type is invalid"`
-	DateCreated time.Time   `json:"dateCreated"`
-	UserId      int         `json:"userId"`
-	ApiVersion  string      `json:"apiVersion"`
-	Action      string      `json:"action"`
-	Data        PaymentData `json:"data"`
-}
-
-type PaymentData struct {
-	Id string `json:"id" valid:"required,numeric"`
-}
-
-func (p PaymentNotificationDTO) ValidatePaymentNotification() (bool, error) {
+func (p PaymentOrder) ValidatePaymentOrder() (bool, error) {
 	if _, err := govalidator.ValidateStruct(p); err != nil {
 		return false, err
 	}
 
 	return true, nil
+}
+
+type PaymentQRCode struct {
+	QRCode string `json:"qrcode"`
 }

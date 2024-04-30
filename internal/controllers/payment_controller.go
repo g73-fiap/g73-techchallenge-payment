@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
@@ -19,32 +17,20 @@ func NewPaymentController() PaymentController {
 }
 
 func (c PaymentController) PaymentHandler(ctx *gin.Context) {
-	id := ctx.Param("id")
-	if id == "" {
-		handleBadRequestResponse(ctx, "[id] path parameter is required", errors.New("id is missing"))
-		return
-	}
-
-	orderId, err := strconv.Atoi(id)
+	var paymentOrder dto.PaymentOrder
+	err := ctx.ShouldBindJSON(&paymentOrder)
 	if err != nil {
-		handleBadRequestResponse(ctx, "[id] path parameter is invalid", err)
+		handleBadRequestResponse(ctx, "failed to bind payment order payload", err)
 		return
 	}
 
-	var paymentNotification dto.PaymentNotificationDTO
-	err = ctx.ShouldBindJSON(&paymentNotification)
-	if err != nil {
-		handleBadRequestResponse(ctx, "failed to bind payment notification payload", err)
-		return
-	}
-
-	valid, err := paymentNotification.ValidatePaymentNotification()
+	valid, err := paymentOrder.ValidatePaymentOrder()
 	if !valid {
-		handleBadRequestResponse(ctx, "invalid payment notification payload", err)
+		handleBadRequestResponse(ctx, "invalid payment order payload", err)
 		return
 	}
 
-	err = c.paymentUsecase.CreateOrderPayment(orderId)
+	err = c.paymentUsecase.CreatePaymentOrder(paymentOrder)
 	if err != nil {
 		handleInternalServerResponse(ctx, "failed to handle payment", err)
 		return

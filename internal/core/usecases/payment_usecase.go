@@ -1,27 +1,28 @@
 package usecases
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
-	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type PaymentUsecase interface {
 	GeneratePaymentQRCode(order entities.Order) (string, error)
-	CreateOrderPayment(orderId int) error
+	CreatePaymentOrder(paymentOrder dto.PaymentOrder) error
 }
 
 type paymentUsecase struct {
-	notificationUrl        string
-	sponsorId              string
-	paymentBroker          payment.PaymentBroker
-	orderRepositoryGateway gateways.OrderRepositoryGateway
+	notificationUrl string
+	sponsorId       string
+	paymentBroker   payment.PaymentBroker
 }
 
-func NewPaymentUsecase(notificationUrl, sponsorId string, paymentBroker payment.PaymentBroker) PaymentUsecase {
+func NewPaymentUsecase(notificationUrl, sponsorId string, paymentBroker payment.PaymentBroker) paymentUsecase {
 	return paymentUsecase{
 		notificationUrl: notificationUrl,
 		sponsorId:       sponsorId,
@@ -29,41 +30,43 @@ func NewPaymentUsecase(notificationUrl, sponsorId string, paymentBroker payment.
 	}
 }
 
-func (u paymentUsecase) GeneratePaymentQRCode(order entities.Order) (string, error) {
-	paymentRequest := u.createPaymentRequest(order)
-	paymentResponse, err := u.paymentBroker.GeneratePaymentQRCode(paymentRequest)
+func (u paymentUsecase) CreatePaymentOrder(paymentOrder dto.PaymentOrder) (dto.PaymentOrder, error) {
+	paymentRequest := u.createPaymentRequest(paymentOrder)
+	_, err := u.paymentBroker.GeneratePaymentQRCode(paymentRequest)
 	if err != nil {
-		log.Errorf("failed to generate payment qrcode for the order [%d], error: %v", order.ID, err)
-		return "", err
+		log.Errorf("failed to generate payment qrcode for the order [%d], error: %v", paymentOrder.OrderId, err)
+		return dto.PaymentOrder{}, err
 	}
 
-	return paymentResponse.QrData, nil
+	return dto.PaymentOrder{}, err
 }
 
-func (u paymentUsecase) createPaymentRequest(order entities.Order) dto.PaymentQRCodeRequest {
-	var items []dto.PaymentItemRequest
-	for _, item := range order.Items {
+func (u paymentUsecase) createPaymentRequest(paymentOrder dto.PaymentOrder) payment.PaymentRequest {
+	var items []payment.PaymentItemRequest
+	for _, item := range paymentOrder.Items {
 		items = append(items, createPaymentItem(item))
 	}
 
-	return dto.PaymentQRCodeRequest{
-		OrderId:     order.ID,
-		Items:       items,
-		TotalAmount: order.TotalAmount,
+	return payment.PaymentRequest{
+		ExternalReference: strconv.FormatUint(uint64(paymentOrder.OrderId), 10),
+		Title:             fmt.Sprintf("Order %d for the Customer[%s]", paymentOrder.OrderId, paymentOrder.CustomerCPF),
+		NotificationURL:   fmt.Sprintf("%s/orders/%d/payment", u.notificationUrl, paymentOrder.OrderId),
+		TotalAmount:       paymentOrder.TotalAmount,
+		Items:             items,
+		Sponsor:           u.sponsorId,
 	}
 }
 
-func createPaymentItem(item entities.OrderItem) dto.PaymentItemRequest {
-	paymentItem := dto.PaymentItemRequest{
-		Quantity: item.Quantity,
-		Product: dto.PaymentProductRequest{
-			Name:        item.Product.Name,
-			SkuId:       item.Product.SkuId,
-			Description: item.Product.Description,
-			Category:    item.Product.Category,
-			Type:        item.Type,
-			Price:       item.Product.Price,
-		},
+func createPaymentItem(item dto.PaymentOrderItem) payment.PaymentItemRequest {
+	paymentItem := payment.PaymentItemRequest{
+		SkuNumber:   item.Product.SkuId,
+		Category:    item.Product.Category,
+		Title:       item.Product.Name,
+		Description: item.Product.Description,
+		UnitPrice:   item.Product.Price,
+		Quantity:    item.Quantity,
+		UnitMeasure: getUnitMeasure(item.Product.Type),
+		TotalAmount: item.Product.Price * float64(item.Quantity),
 	}
 
 	return paymentItem
@@ -74,14 +77,4 @@ func getUnitMeasure(itemType string) string {
 		return "pack"
 	}
 	return "unit"
-}
-
-func (u paymentUsecase) CreateOrderPayment(orderId int) error {
-	err := u.orderRepositoryGateway.UpdateOrderStatus(orderId, string(dto.OrderStatusPaid))
-	if err != nil {
-		log.Errorf("failed to update order status from order id [%d], error: %v", orderId, err)
-		return err
-	}
-
-	return nil
 }
