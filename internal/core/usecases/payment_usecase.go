@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
 
@@ -12,7 +11,6 @@ import (
 )
 
 type PaymentUsecase interface {
-	GeneratePaymentQRCode(order entities.Order) (string, error)
 	CreatePaymentOrder(paymentOrder dto.PaymentOrder) error
 }
 
