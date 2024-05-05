@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
@@ -16,25 +18,60 @@ func NewPaymentController() PaymentController {
 	return PaymentController{}
 }
 
-func (c PaymentController) PaymentHandler(ctx *gin.Context) {
-	var paymentOrder dto.PaymentOrder
-	err := ctx.ShouldBindJSON(&paymentOrder)
+func (p PaymentController) CreatePaymentOrderHandler(c *gin.Context) {
+	var paymentOrder dto.PaymentOrderDTO
+	err := c.ShouldBindJSON(&paymentOrder)
 	if err != nil {
-		handleBadRequestResponse(ctx, "failed to bind payment order payload", err)
+		handleBadRequestResponse(c, "failed to bind payment order payload", err)
 		return
 	}
 
 	valid, err := paymentOrder.ValidatePaymentOrder()
 	if !valid {
-		handleBadRequestResponse(ctx, "invalid payment order payload", err)
+		handleBadRequestResponse(c, "invalid payment order payload", err)
 		return
 	}
 
-	err = c.paymentUsecase.CreatePaymentOrder(paymentOrder)
+	paymentQRCode, err := p.paymentUsecase.CreatePaymentOrder(paymentOrder)
 	if err != nil {
-		handleInternalServerResponse(ctx, "failed to handle payment", err)
+		handleInternalServerResponse(c, "failed to create payment order", err)
 		return
 	}
 
-	ctx.Status(http.StatusOK)
+	c.JSON(http.StatusOK, dto.PaymentQRCode{QRCode: paymentQRCode})
+}
+
+func (p PaymentController) NotifyPaymentHandler(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		handleBadRequestResponse(c, "[id] path parameter is required", errors.New("id is missing"))
+		return
+	}
+
+	orderId, err := strconv.Atoi(id)
+	if err != nil {
+		handleBadRequestResponse(c, "[id] path parameter is invalid", err)
+		return
+	}
+
+	var paymentNotification dto.PaymentNotificationDTO
+	err = c.ShouldBindJSON(&paymentNotification)
+	if err != nil {
+		handleBadRequestResponse(c, "failed to bind payment notification payload", err)
+		return
+	}
+
+	valid, err := paymentNotification.ValidatePaymentNotification()
+	if !valid {
+		handleBadRequestResponse(c, "invalid payment notification payload", err)
+		return
+	}
+
+	err = p.paymentUsecase.NotifyPayment(orderId)
+	if err != nil {
+		handleInternalServerResponse(c, "failed to notify payment", err)
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

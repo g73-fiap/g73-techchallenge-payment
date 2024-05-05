@@ -1,14 +1,25 @@
 package dto
 
 import (
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/asaskevich/govalidator"
 )
 
-type PaymentOrder struct {
+type PaymentOrderDTO struct {
 	OrderId     int                `json:"orderId" valid:"required~OrderId is required"`
 	CustomerCPF string             `json:"customerCPF" valid:"required~Customer CPF is required"`
 	Items       []PaymentOrderItem `json:"items"  valid:"required~Items list is required"`
 	TotalAmount float64            `json:"totalAmount"  valid:"float,required~TotalAmount is required"`
+}
+
+func (p PaymentOrderDTO) ToPaymentOrder(qrCode string) entities.PaymentOrder {
+	return entities.PaymentOrder{
+		OrderId:     p.OrderId,
+		CustomerCPF: p.CustomerCPF,
+		TotalAmout:  p.TotalAmount,
+		Status:      entities.PaymentStatusPending,
+		QRCode:      qrCode,
+	}
 }
 
 type PaymentOrderItem struct {
@@ -33,7 +44,7 @@ type OrderItemProduct struct {
 	Price       float64 `json:"price" valid:"required~Product price is required"`
 }
 
-func (p PaymentOrder) ValidatePaymentOrder() (bool, error) {
+func (p PaymentOrderDTO) ValidatePaymentOrder() (bool, error) {
 	if _, err := govalidator.ValidateStruct(p); err != nil {
 		return false, err
 	}

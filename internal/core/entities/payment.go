@@ -7,10 +7,10 @@ var (
 	PaymentStatusPaid    PaymentStatus = "PAID"
 )
 
-type Payment struct {
+type PaymentOrder struct {
 	OrderId     int           `dynamodbav:"OrderId"`
 	CustomerCPF string        `dynamodbav:"CustomerCPF"`
-	TotalAmout  float32       `dynamodbav:"TotalAmount"`
+	TotalAmout  float64       `dynamodbav:"TotalAmount"`
 	Status      PaymentStatus `dynamodbav:"Status"`
 	QRCode      string        `dynamodbav:"QRCode"`
 }

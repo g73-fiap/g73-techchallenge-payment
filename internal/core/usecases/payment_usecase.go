@@ -4,20 +4,26 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
+	drivers "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type PaymentUsecase interface {
-	CreatePaymentOrder(paymentOrder dto.PaymentOrder) error
+	CreatePaymentOrder(paymentOrder dto.PaymentOrderDTO) (string, error)
+	NotifyPayment(orderId int) error
 }
 
 type paymentUsecase struct {
-	notificationUrl string
-	sponsorId       string
-	paymentBroker   payment.PaymentBroker
+	notificationUrl   string
+	sponsorId         string
+	paymentBroker     drivers.PaymentBroker
+	paymentRepository gateways.PaymentRepositoryGateway
+	orderClient       gateways.OrderClient
 }
 
 func NewPaymentUsecase(notificationUrl, sponsorId string, paymentBroker payment.PaymentBroker) paymentUsecase {
@@ -28,18 +34,40 @@ func NewPaymentUsecase(notificationUrl, sponsorId string, paymentBroker payment.
 	}
 }
 
-func (u paymentUsecase) CreatePaymentOrder(paymentOrder dto.PaymentOrder) (dto.PaymentOrder, error) {
+func (u paymentUsecase) CreatePaymentOrder(paymentOrder dto.PaymentOrderDTO) (string, error) {
 	paymentRequest := u.createPaymentRequest(paymentOrder)
-	_, err := u.paymentBroker.GeneratePaymentQRCode(paymentRequest)
+	paymentQRCode, err := u.paymentBroker.GeneratePaymentQRCode(paymentRequest)
 	if err != nil {
 		log.Errorf("failed to generate payment qrcode for the order [%d], error: %v", paymentOrder.OrderId, err)
-		return dto.PaymentOrder{}, err
+		return "", err
 	}
 
-	return dto.PaymentOrder{}, err
+	err = u.paymentRepository.SavePaymentOrder(paymentOrder, paymentQRCode.QrData)
+	if err != nil {
+		log.Errorf("failed to save payment order [%d], error: %v", paymentOrder.OrderId, err)
+		return "", err
+	}
+
+	return paymentQRCode.QrData, err
 }
 
-func (u paymentUsecase) createPaymentRequest(paymentOrder dto.PaymentOrder) payment.PaymentRequest {
+func (u paymentUsecase) NotifyPayment(orderId int) error {
+	err := u.paymentRepository.UpdatePaymentOrderStatus(orderId, entities.PaymentStatusPaid)
+	if err != nil {
+		log.Errorf("failed to payment payment status for the order [%d], error: %v", orderId, err)
+		return err
+	}
+
+	err = u.orderClient.NotifyPaymentOrder(orderId, entities.PaymentStatusPaid)
+	if err != nil {
+		log.Errorf("failed to notify payment order for the order [%d], error: %v", orderId, err)
+		return err
+	}
+
+	return nil
+}
+
+func (u paymentUsecase) createPaymentRequest(paymentOrder dto.PaymentOrderDTO) payment.PaymentRequest {
 	var items []payment.PaymentItemRequest
 	for _, item := range paymentOrder.Items {
 		items = append(items, createPaymentItem(item))
@@ -48,7 +76,7 @@ func (u paymentUsecase) createPaymentRequest(paymentOrder dto.PaymentOrder) paym
 	return payment.PaymentRequest{
 		ExternalReference: strconv.FormatUint(uint64(paymentOrder.OrderId), 10),
 		Title:             fmt.Sprintf("Order %d for the Customer[%s]", paymentOrder.OrderId, paymentOrder.CustomerCPF),
-		NotificationURL:   fmt.Sprintf("%s/orders/%d/payment", u.notificationUrl, paymentOrder.OrderId),
+		NotificationURL:   fmt.Sprintf("%s/payment/%d/notify", u.notificationUrl, paymentOrder.OrderId),
 		TotalAmount:       paymentOrder.TotalAmount,
 		Items:             items,
 		Sponsor:           u.sponsorId,
