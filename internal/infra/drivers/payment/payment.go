@@ -1,7 +1,9 @@
 package payment
 
+import "github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
+
 type PaymentBroker interface {
-	GeneratePaymentQRCode(payment PaymentRequest) (PaymentQRCodeResponse, error)
+	GeneratePaymentQRCode(paymentOrder dto.PaymentOrderDTO) (PaymentQRCodeResponse, error)
 }
 type PaymentRequest struct {
 	ExternalReference string               `json:"external_reference"`

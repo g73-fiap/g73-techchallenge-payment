@@ -11,11 +11,13 @@ import (
 )
 
 type PaymentController struct {
-	paymentUsecase usecases.PaymentUsecase
+	paymentUsecase usecases.PaymentUseCase
 }
 
-func NewPaymentController() PaymentController {
-	return PaymentController{}
+func NewPaymentController(paymentUsecase usecases.PaymentUseCase) PaymentController {
+	return PaymentController{
+		paymentUsecase: paymentUsecase,
+	}
 }
 
 func (p PaymentController) CreatePaymentOrderHandler(c *gin.Context) {

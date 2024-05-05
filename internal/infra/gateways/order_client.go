@@ -18,6 +18,13 @@ type orderClient struct {
 	orderApiUrl string
 }
 
+func NewOrderClient(httpClient http.HttpClient, orderApiUrl string) OrderClient {
+	return orderClient{
+		httpClient:  httpClient,
+		orderApiUrl: orderApiUrl,
+	}
+}
+
 func (o orderClient) NotifyPaymentOrder(orderId int, status entities.PaymentStatus) error {
 	reqBody, err := json.Marshal(dto.PaymentOrderStatusDTO{
 		Status: string(status),

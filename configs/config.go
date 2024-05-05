@@ -17,6 +17,11 @@ type AppConfig struct {
 	PaymentBrokerURL string
 	NotificationURL  string
 	SponsorId        string
+
+	PaymentTable string
+
+	OrderApiUrl     string
+	OrderApiTimeout int
 }
 
 func NewConfig() *Config {
@@ -76,6 +81,11 @@ func (c *Config) extractConfigVars() (AppConfig, error) {
 	appConfig.PaymentBrokerURL = c.viper.GetString("paymentBroker.url")
 	appConfig.NotificationURL = c.viper.GetString("paymentBroker.notificationUrl")
 	appConfig.SponsorId = c.viper.GetString("paymentBroker.sponsorId")
+
+	appConfig.PaymentTable = c.viper.GetString("paymentRepository.table")
+
+	appConfig.OrderApiUrl = c.viper.GetString("orderApi.url")
+	appConfig.OrderApiTimeout = c.viper.GetInt("orderApi.timeoutMs")
 
 	return appConfig, nil
 }
