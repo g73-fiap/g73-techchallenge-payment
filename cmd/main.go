@@ -24,6 +24,7 @@ func main() {
 		panic(err)
 	}
 
+	// mercado pago payment broker
 	paymentHttpClient := http.NewMockHttpClient()
 	paymentBrokerConfig := payment.MercadoPagoBrokerConfig{
 		HttpClient:      paymentHttpClient,
@@ -33,21 +34,26 @@ func main() {
 	}
 	paymentBroker := payment.NewMercadoPagoBroker(paymentBrokerConfig)
 
+	// payment repository
 	dynamodbClient, err := NewDynamoDBClient()
 	if err != nil {
 		panic(err)
 	}
 	paymentRepository := gateways.NewPaymentRepositoryGateway(dynamodbClient, appConfig.PaymentTable)
 
+	// order api
 	httpClient := http.NewHttpClient(appConfig.OrderApiTimeout)
 	orderClient := gateways.NewOrderClient(httpClient, appConfig.OrderApiUrl)
 
+	// payment usecase
 	paymentUseCaseConfig := usecases.PaymentUseCaseConfig{
 		PaymentBroker:     paymentBroker,
 		PaymentRepository: paymentRepository,
 		OrderClient:       orderClient,
 	}
 	paymentUseCase := usecases.NewPaymentUseCase(paymentUseCaseConfig)
+
+	// payment controller
 	paymentController := controllers.NewPaymentController(paymentUseCase)
 
 	api := api.NewApi(paymentController)
