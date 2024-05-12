@@ -63,13 +63,7 @@ func (p PaymentController) NotifyPaymentHandler(c *gin.Context) {
 		return
 	}
 
-	valid, err := paymentNotification.ValidatePaymentNotification()
-	if !valid {
-		handleBadRequestResponse(c, "invalid payment notification payload", err)
-		return
-	}
-
-	err = p.paymentUsecase.NotifyPayment(orderId)
+	err = p.paymentUsecase.NotifyPayment(orderId, paymentNotification.PaymentId)
 	if err != nil {
 		handleInternalServerResponse(c, "failed to notify payment", err)
 		return

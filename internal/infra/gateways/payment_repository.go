@@ -1,6 +1,8 @@
 package gateways
 
 import (
+	"strconv"
+
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/dynamodb"
@@ -11,7 +13,7 @@ import (
 
 type PaymentRepositoryGateway interface {
 	SavePaymentOrder(paymentOrderDTO dto.PaymentOrderDTO, qrCode string) error
-	UpdatePaymentOrderStatus(orderId int, status entities.PaymentStatus) error
+	UpdatePaymentOrderStatus(orderId, paymentId int, status entities.PaymentStatus) error
 }
 
 type paymentRepositoryGateway struct {
@@ -42,11 +44,12 @@ func (p paymentRepositoryGateway) SavePaymentOrder(paymentOrderDTO dto.PaymentOr
 	return nil
 }
 
-func (p paymentRepositoryGateway) UpdatePaymentOrderStatus(orderId int, status entities.PaymentStatus) error {
+func (p paymentRepositoryGateway) UpdatePaymentOrderStatus(orderId, paymentId int, status entities.PaymentStatus) error {
 	key := map[string]types.AttributeValue{
-		"OrderId": &types.AttributeValueMemberS{Value: "1"},
+		"OrderId": &types.AttributeValueMemberN{Value: strconv.Itoa(orderId)},
 	}
 	update := expression.Set(expression.Name("Status"), expression.Value(status))
+	update.Set(expression.Name("PaymentId"), expression.Value(paymentId))
 	expr, err := expression.NewBuilder().WithUpdate(update).Build()
 	if err != nil {
 		return err

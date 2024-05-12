@@ -7,7 +7,7 @@ import (
 
 type PaymentOrderDTO struct {
 	OrderId     int                `json:"orderId" valid:"required~OrderId is required"`
-	CustomerCPF string             `json:"customerCPF" valid:"required~Customer CPF is required"`
+	CustomerCPF string             `json:"customerCpf" valid:"required~Customer CPF is required"`
 	Items       []PaymentOrderItem `json:"items"  valid:"required~Items list is required"`
 	TotalAmount float64            `json:"totalAmount"  valid:"float,required~TotalAmount is required"`
 }

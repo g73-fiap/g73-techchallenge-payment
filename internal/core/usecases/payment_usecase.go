@@ -11,7 +11,7 @@ import (
 
 type PaymentUseCase interface {
 	CreatePaymentOrder(paymentOrder dto.PaymentOrderDTO) (string, error)
-	NotifyPayment(orderId int) error
+	NotifyPayment(orderId, paymentId int) error
 }
 
 type paymentUseCase struct {
@@ -50,8 +50,8 @@ func (u paymentUseCase) CreatePaymentOrder(paymentOrder dto.PaymentOrderDTO) (st
 	return paymentQRCode.QrData, err
 }
 
-func (u paymentUseCase) NotifyPayment(orderId int) error {
-	err := u.paymentRepository.UpdatePaymentOrderStatus(orderId, entities.PaymentStatusPaid)
+func (u paymentUseCase) NotifyPayment(orderId, paymentId int) error {
+	err := u.paymentRepository.UpdatePaymentOrderStatus(orderId, paymentId, entities.PaymentStatusPaid)
 	if err != nil {
 		log.Errorf("failed to payment payment status for the order [%d], error: %v", orderId, err)
 		return err

@@ -12,16 +12,20 @@ type Config struct {
 }
 
 type AppConfig struct {
+	Port        string
 	Environment string
 
 	PaymentBrokerURL string
 	NotificationURL  string
 	SponsorId        string
 
-	PaymentTable string
+	PaymentTable         string
+	PaymentTableEndpoint string
 
-	OrderApiUrl     string
-	OrderApiTimeout int
+	OrderApiUrl      string
+	ProductionApiUrl string
+
+	DefaultTimeout int
 }
 
 func NewConfig() *Config {
@@ -76,6 +80,7 @@ func (c *Config) setupEnvironment() {
 func (c *Config) extractConfigVars() (AppConfig, error) {
 	appConfig := AppConfig{}
 
+	appConfig.Port = c.viper.GetString("PORT")
 	appConfig.Environment = c.viper.GetString("ENVIRONMENT")
 
 	appConfig.PaymentBrokerURL = c.viper.GetString("paymentBroker.url")
@@ -83,9 +88,12 @@ func (c *Config) extractConfigVars() (AppConfig, error) {
 	appConfig.SponsorId = c.viper.GetString("paymentBroker.sponsorId")
 
 	appConfig.PaymentTable = c.viper.GetString("paymentRepository.table")
+	appConfig.PaymentTableEndpoint = c.viper.GetString("paymentRepository.endpoint")
 
-	appConfig.OrderApiUrl = c.viper.GetString("orderApi.url")
-	appConfig.OrderApiTimeout = c.viper.GetInt("orderApi.timeoutMs")
+	appConfig.OrderApiUrl = c.viper.GetString("ORDER_API_URL")
+	appConfig.ProductionApiUrl = c.viper.GetString("PRODUCTION_API_URL")
+
+	appConfig.DefaultTimeout = c.viper.GetInt("DEFAULT_TIMEOUT")
 
 	return appConfig, nil
 }

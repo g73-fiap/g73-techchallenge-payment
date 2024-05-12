@@ -11,6 +11,7 @@ import (
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/http"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	awsDynamoDb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 
@@ -35,14 +36,14 @@ func main() {
 	paymentBroker := payment.NewMercadoPagoBroker(paymentBrokerConfig)
 
 	// payment repository
-	dynamodbClient, err := NewDynamoDBClient()
+	dynamodbClient, err := NewDynamoDBClient(appConfig.PaymentTableEndpoint)
 	if err != nil {
 		panic(err)
 	}
 	paymentRepository := gateways.NewPaymentRepositoryGateway(dynamodbClient, appConfig.PaymentTable)
 
 	// order api
-	httpClient := http.NewHttpClient(appConfig.OrderApiTimeout)
+	httpClient := http.NewHttpClient(appConfig.DefaultTimeout)
 	orderClient := gateways.NewOrderClient(httpClient, appConfig.OrderApiUrl)
 
 	// payment usecase
@@ -57,16 +58,23 @@ func main() {
 	paymentController := controllers.NewPaymentController(paymentUseCase)
 
 	api := api.NewApi(paymentController)
-	api.Run(":8081")
+	api.Run(":" + appConfig.Port)
 }
 
-func NewDynamoDBClient() (dynamodb.DynamoDBClient, error) {
+func NewDynamoDBClient(endpoint string) (dynamodb.DynamoDBClient, error) {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	client := awsDynamoDb.NewFromConfig(cfg)
+	if endpoint != "" {
+		client := awsDynamoDb.NewFromConfig(cfg, func(o *awsDynamoDb.Options) {
+			o.BaseEndpoint = aws.String(endpoint)
+		})
+		return dynamodb.NewDynamoDBClient(client), nil
+	}
 
+	client := awsDynamoDb.NewFromConfig(cfg)
 	return dynamodb.NewDynamoDBClient(client), nil
+
 }
