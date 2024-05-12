@@ -15,7 +15,7 @@
                 "ENVIRONMENT": "local",
                 "CONFIG_DIR_PATH": "../configs",
                 "ORDER_API_URL": "http://localhost:8080/v1/orders",
-                "ORDER_API_TIMEOUT": "500ms",
+                "DEFAULT_TIMEOUT": "500ms",
                 "AWS_ACCESS_KEY_ID": "DUMMYIDEXAMPLE",
                 "AWS_SECRET_ACCESS_KEY": "DUMMYEXAMPLEKEY"
             }
