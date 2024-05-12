@@ -11,44 +11,63 @@ import (
 )
 
 type PaymentController struct {
-	paymentUsecase usecases.PaymentUsecase
+	paymentUsecase usecases.PaymentUseCase
 }
 
-func NewPaymentController() PaymentController {
-	return PaymentController{}
+func NewPaymentController(paymentUsecase usecases.PaymentUseCase) PaymentController {
+	return PaymentController{
+		paymentUsecase: paymentUsecase,
+	}
 }
 
-func (c PaymentController) PaymentHandler(ctx *gin.Context) {
-	id := ctx.Param("id")
+func (p PaymentController) CreatePaymentOrderHandler(c *gin.Context) {
+	var paymentOrder dto.PaymentOrderDTO
+	err := c.ShouldBindJSON(&paymentOrder)
+	if err != nil {
+		handleBadRequestResponse(c, "failed to bind payment order payload", err)
+		return
+	}
+
+	valid, err := paymentOrder.ValidatePaymentOrder()
+	if !valid {
+		handleBadRequestResponse(c, "invalid payment order payload", err)
+		return
+	}
+
+	paymentQRCode, err := p.paymentUsecase.CreatePaymentOrder(paymentOrder)
+	if err != nil {
+		handleInternalServerResponse(c, "failed to create payment order", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.PaymentQRCode{QRCode: paymentQRCode})
+}
+
+func (p PaymentController) NotifyPaymentHandler(c *gin.Context) {
+	id := c.Param("id")
 	if id == "" {
-		handleBadRequestResponse(ctx, "[id] path parameter is required", errors.New("id is missing"))
+		handleBadRequestResponse(c, "[id] path parameter is required", errors.New("id is missing"))
 		return
 	}
 
 	orderId, err := strconv.Atoi(id)
 	if err != nil {
-		handleBadRequestResponse(ctx, "[id] path parameter is invalid", err)
+		handleBadRequestResponse(c, "[id] path parameter is invalid", err)
 		return
 	}
 
 	var paymentNotification dto.PaymentNotificationDTO
-	err = ctx.ShouldBindJSON(&paymentNotification)
+	err = c.ShouldBindJSON(&paymentNotification)
 	if err != nil {
-		handleBadRequestResponse(ctx, "failed to bind payment notification payload", err)
+		handleBadRequestResponse(c, "failed to bind payment notification payload", err)
 		return
 	}
 
-	valid, err := paymentNotification.ValidatePaymentNotification()
-	if !valid {
-		handleBadRequestResponse(ctx, "invalid payment notification payload", err)
-		return
-	}
-
-	err = c.paymentUsecase.CreateOrderPayment(orderId)
+	err = p.paymentUsecase.NotifyPayment(orderId, paymentNotification.PaymentId)
 	if err != nil {
-		handleInternalServerResponse(ctx, "failed to handle payment", err)
+		handleInternalServerResponse(c, "failed to notify payment", err)
 		return
 	}
 
-	ctx.Status(http.StatusOK)
+	c.Status(http.StatusOK)
 }

@@ -4,5 +4,5 @@ paymentBroker:
   sponsorId: "12345"
 
 paymentRepository:
-  table: payment
-  endpoint:
+  table: Payment
+  endpoint: http://localhost:8000/

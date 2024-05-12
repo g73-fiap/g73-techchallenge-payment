@@ -24,3 +24,12 @@ func (c mockHttpClient) DoPost(url string, body []byte) (*httpClient.Response, e
 func (c mockHttpClient) DoGet(url string) (*httpClient.Response, error) {
 	return httpClient.Get(url)
 }
+
+func (c mockHttpClient) DoPut(url string, body []byte) (*httpClient.Response, error) {
+	client := httpClient.Client{}
+	request, err := httpClient.NewRequest(httpClient.MethodPut, url, bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+	return client.Do(request)
+}

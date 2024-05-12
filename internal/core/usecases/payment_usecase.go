@@ -3,83 +3,63 @@ package usecases
 import (
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
-	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
+	drivers "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways"
 
 	log "github.com/sirupsen/logrus"
 )
 
-type PaymentUsecase interface {
-	GeneratePaymentQRCode(order entities.Order) (string, error)
-	CreateOrderPayment(orderId int) error
+type PaymentUseCase interface {
+	CreatePaymentOrder(paymentOrder dto.PaymentOrderDTO) (string, error)
+	NotifyPayment(orderId, paymentId int) error
 }
 
-type paymentUsecase struct {
-	notificationUrl        string
-	sponsorId              string
-	paymentBroker          payment.PaymentBroker
-	orderRepositoryGateway gateways.OrderRepositoryGateway
+type paymentUseCase struct {
+	paymentBroker     drivers.PaymentBroker
+	paymentRepository gateways.PaymentRepositoryGateway
+	orderClient       gateways.OrderClient
 }
 
-func NewPaymentUsecase(notificationUrl, sponsorId string, paymentBroker payment.PaymentBroker) PaymentUsecase {
-	return paymentUsecase{
-		notificationUrl: notificationUrl,
-		sponsorId:       sponsorId,
-		paymentBroker:   paymentBroker,
+type PaymentUseCaseConfig struct {
+	PaymentBroker     drivers.PaymentBroker
+	PaymentRepository gateways.PaymentRepositoryGateway
+	OrderClient       gateways.OrderClient
+}
+
+func NewPaymentUseCase(config PaymentUseCaseConfig) paymentUseCase {
+	return paymentUseCase{
+		paymentBroker:     config.PaymentBroker,
+		paymentRepository: config.PaymentRepository,
+		orderClient:       config.OrderClient,
 	}
 }
 
-func (u paymentUsecase) GeneratePaymentQRCode(order entities.Order) (string, error) {
-	paymentRequest := u.createPaymentRequest(order)
-	paymentResponse, err := u.paymentBroker.GeneratePaymentQRCode(paymentRequest)
+func (u paymentUseCase) CreatePaymentOrder(paymentOrder dto.PaymentOrderDTO) (string, error) {
+	paymentQRCode, err := u.paymentBroker.GeneratePaymentQRCode(paymentOrder)
 	if err != nil {
-		log.Errorf("failed to generate payment qrcode for the order [%d], error: %v", order.ID, err)
+		log.Errorf("failed to generate payment qrcode for the order [%d], error: %v", paymentOrder.OrderId, err)
 		return "", err
 	}
 
-	return paymentResponse.QrData, nil
-}
-
-func (u paymentUsecase) createPaymentRequest(order entities.Order) dto.PaymentQRCodeRequest {
-	var items []dto.PaymentItemRequest
-	for _, item := range order.Items {
-		items = append(items, createPaymentItem(item))
-	}
-
-	return dto.PaymentQRCodeRequest{
-		OrderId:     order.ID,
-		Items:       items,
-		TotalAmount: order.TotalAmount,
-	}
-}
-
-func createPaymentItem(item entities.OrderItem) dto.PaymentItemRequest {
-	paymentItem := dto.PaymentItemRequest{
-		Quantity: item.Quantity,
-		Product: dto.PaymentProductRequest{
-			Name:        item.Product.Name,
-			SkuId:       item.Product.SkuId,
-			Description: item.Product.Description,
-			Category:    item.Product.Category,
-			Type:        item.Type,
-			Price:       item.Product.Price,
-		},
-	}
-
-	return paymentItem
-}
-
-func getUnitMeasure(itemType string) string {
-	if itemType == string(dto.OrderItemTypeCustomCombo) {
-		return "pack"
-	}
-	return "unit"
-}
-
-func (u paymentUsecase) CreateOrderPayment(orderId int) error {
-	err := u.orderRepositoryGateway.UpdateOrderStatus(orderId, string(dto.OrderStatusPaid))
+	err = u.paymentRepository.SavePaymentOrder(paymentOrder, paymentQRCode.QrData)
 	if err != nil {
-		log.Errorf("failed to update order status from order id [%d], error: %v", orderId, err)
+		log.Errorf("failed to save payment order [%d], error: %v", paymentOrder.OrderId, err)
+		return "", err
+	}
+
+	return paymentQRCode.QrData, err
+}
+
+func (u paymentUseCase) NotifyPayment(orderId, paymentId int) error {
+	err := u.paymentRepository.UpdatePaymentOrderStatus(orderId, paymentId, entities.PaymentStatusPaid)
+	if err != nil {
+		log.Errorf("failed to payment payment status for the order [%d], error: %v", orderId, err)
+		return err
+	}
+
+	err = u.orderClient.NotifyPaymentOrder(orderId, entities.PaymentStatusPaid)
+	if err != nil {
+		log.Errorf("failed to notify payment order for the order [%d], error: %v", orderId, err)
 		return err
 	}
 

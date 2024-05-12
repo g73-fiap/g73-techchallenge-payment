@@ -1,12 +1,23 @@
-version: '3.5'
+version: '3.8'
 services:
-  postgres:
-    image: postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - ~/apps/postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_USER=admin
-      - POSTGRES_DB=g37_lanches
+ dynamodb-local:
+   command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+   image: "amazon/dynamodb-local:latest"
+   container_name: dynamodb-local
+   ports:
+     - "8000:8000"
+   volumes:
+     - "./docker/dynamodb:/home/dynamodblocal/data"
+   working_dir: /home/dynamodblocal
+ app-node:
+   depends_on:
+     - dynamodb-local
+   image: amazon/aws-cli
+   container_name: app-node
+   ports:
+    - "8001:8001"
+   environment:
+     AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+     AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+   command:
+     dynamodb create-table --table-name Payment --attribute-definitions AttributeName=OrderId,AttributeType=N --key-schema AttributeName=OrderId,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --table-class STANDARD --endpoint-url http://dynamodb-local:8000/ --region us-east-1
