@@ -1,89 +1,89 @@
-# g37-lanches
+# g73-techchallenge-payment
 
 [![Go Reference](https://pkg.go.dev/badge/golang.org/x/example.svg)](https://pkg.go.dev/golang.org/x/example)
 
-Serviço de controle de pedidos desenvolvido em Golang.
+Este é um microsserviço responsável por gerenciar pagamentos de pedidos em uma lanchonete. Ele oferece endpoints para criar novos pedidos de pagamento, notificar o status do pagamento e interagir com um serviço de pagamento de terceiros.
 
-## Tech Stack
 
-**API:** Go
+## Tecnologias Utilizadas
 
-**Infra:** PostgreSQL
+- Linguagem de Programação: Go
+- Banco de Dados: DynamoDB
+- Framework Web: Gin
+- Outras Dependências: AWS SDK para Go, lib/pq (para conexão com PostgreSQL)
+- Docker
 
-<br/>
+
 
 ## Requisitos
 
-- go 1.20
-- docker
+- go 1.20 ou superior
+- Docker
 - kubernetes cluster (Docker desktop)
 - kubectl
 
-<br/>
 
-## Execução com Docker Compose
 
-Build image
+## Funcionalidades
+- Criar novos pedidos de pagamento.
+- Notificar o status do pagamento.
+- Gerar QR code de pagamento usando um serviço de pagamento de terceiros.
+- Armazenar informações de pedidos de pagamento no DynamoDB.
+
+
+
+## Como Executar
+Para executar este microsserviço, siga estas etapas:
+
+**1. Configuração do Ambiente:**
+
+- Certifique-se de ter Go instalado na sua máquina.
+- Se estiver usando o DynamoDB localmente, certifique-se de ter Docker e Docker Compose instalados e configurados.
+
+
+**2. Clone o Repositório:**
 
 ```bash
-  docker build -t g37-lanches-api:latest .
+git clone https://github.com/seu-usuario/g73-techchallenge-payment.git
+
 ```
 
-Subir dependências
+**3. Configuração do DynamoDB (Opcional):**
+
+- Navegue até o diretório do projeto e execute o seguinte comando para iniciar o DynamoDB localmente:
+
 ```bash
-  docker-compose up -d
+docker-compose up -d
 ```
 
-Rodar aplicação
+**4. Compilação e Execução do Microsserviço:**
+
+- Navegue até o diretório do projeto e execute o seguinte comando para compilar o microsserviço:
+
 ```bash
-  docker run -e ENVIRONMENT=dev -e POSTGRES_HOST=localhost -e POSTGRES_PORT=5432 -e POSTGRES_DB=g37_lanches -e POSTGRES_SSLMODE=disable -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -p 8080:8080 --network="host" g37-lanches-api:latest
+go build -o g73-techchallenge-payment ./cmd/g73-techchallenge-payment
 ```
-<br/>
 
-## Execução com Kubernetes
-
-Entrar na pasta do Kubernetes
+- Após a compilação, execute o seguinte comando para iniciar o microsserviço:
 ```bash
-  cd k8s
+./g73-techchallenge-payment
 ```
 
-Criar Persistent Volume
-```bash
-  kubectl apply -f pv-volume.yaml
-```
+**5. Testtando a API:**
+- Uma vez que o microsserviço esteja em execução, você pode acessar a API em http://localhost:8080.
+- Consulte a seção de endpoints abaixo para ver os endpoints disponíveis e suas descrições.
 
-Criar Persistent Volume Claim
-```bash
-  kubectl apply -f pv-claim.yaml
-```
 
-Criar Postgres Config Map
-```bash
-  kubectl apply -f postgres-config-map.yaml
-```
 
-Criar Postgres Service
-```bash
-  kubectl apply -f postgres-service.yaml
-```
 
-Criar Postgres Deployment
-```bash
-  kubectl apply -f postgres-deployment.yaml
-```
+## Endpoints
 
-Criar API Service
-```bash
-  kubectl apply -f api-service.yaml
-```
+- **POST /api/payment/create:** Cria um novo pedido de pagamento.
 
-Criar API Deployment
-```bash
-  kubectl apply -f api-deployment.yaml
-```
+- **PUT /api/payment/notify/{orderId}/{paymentId}:** Notifica o status do pagamento para um pedido específico.
 
 ## Documentação
-[Documentation](https://github.com/IgorRamosBR/g37-techchallenge/tree/master/docs)
+[Documentation](https://github.com/IgorRamosBR/g73-techchallenge-payment/tree/master/docs)
 
 
 ## Arquitetura
@@ -105,6 +105,3 @@ Clean Architecture com a estrutura de pastas baseada no [Standard Go Project Lay
 ├── k8s
 ├── migrations
 ```
-
-## Arquitetura na AWS
-<img title="AWS Arch" alt="AWS Architecture" src="./cloud-architecture.jpeg">
