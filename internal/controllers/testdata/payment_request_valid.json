@@ -1,0 +1,30 @@
+{
+    "orderId": 123456,
+    "customerCpf": "123.456.789-00",
+    "items": [
+      {
+        "quantity": 2,
+        "product": {
+          "name": "Product A",
+          "skuId": "SKU123",
+          "description": "Description of Product A",
+          "category": "Category1",
+          "type": "UNIT",
+          "price": 19.99
+        }
+      },
+      {
+        "quantity": 1,
+        "product": {
+          "name": "Product B",
+          "skuId": "SKU124",
+          "description": "Description of Product B",
+          "category": "Category2",
+          "type": "COMBO",
+          "price": 49.99
+        }
+      }
+    ],
+    "totalAmount": 89.97
+  }
+  
