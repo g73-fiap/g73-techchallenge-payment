@@ -12,7 +12,7 @@ services:
  app-node:
    depends_on:
      - dynamodb-local
-   image: amazon/aws-cli
+   image: amazon/aws-cli:2.15.45
    container_name: app-node
    ports:
     - "8001:8001"
