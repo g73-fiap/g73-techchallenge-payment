@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . ./
 
 # Build the binary.
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o bin/main ./cmd/g37-lanches/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o bin/main ./cmd/main.go
 
 # Use the official Debian slim image for a lean production container.
 # https://hub.docker.com/_/debian
