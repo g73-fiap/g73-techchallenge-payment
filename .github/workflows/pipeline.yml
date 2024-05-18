@@ -37,7 +37,7 @@ jobs:
             go-version: '1.20'
               
         - name: Run tests
-          run: go test ./... -coverprofile=coverage.out
+          run: go test -coverprofile=./cov.out ./...
         
         - name: Upload coverage to SonarCloud
           uses: SonarSource/sonarcloud-github-action@master
@@ -46,6 +46,11 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+        - name: Run Gosec Security Scanner
+          run: |
+           go get github.com/securego/gosec/cmd/gosec
+           gosec -no-fail -fmt=sonarqube -out report.json ./...
 
         - name: SonarCloud Scan
           uses: SonarSource/sonarcloud-github-action@master
