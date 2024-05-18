@@ -2,8 +2,12 @@ name: pipeline payment-ms
 
 on:
   push:
-    tags:
-    - '**'
+    branches:
+      - master
+      - pipeline
+  pull_request:
+    branches:
+      - master
 
 jobs:
   test:
