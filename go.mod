@@ -30,7 +30,12 @@ require (
 	github.com/aws/smithy-go v1.20.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
+	golang.org/x/mod v0.12.0 // indirect
+	golang.org/x/tools v0.13.0 // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
 require (
