@@ -49,7 +49,7 @@ jobs:
           run: go install github.com/securego/gosec
   
         - name: Run GoSec
-          run: $HOME/go/bin/gosec -no-fail -fmt=sonarqube -out report.json ./...
+          run: gosec -fmt=json -out=gosecResult.json ./...
         
         - name: Upload coverage to SonarCloud
           uses: sonarsource/sonarcloud-github-action@master
