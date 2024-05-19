@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	drivers "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
 	mock_payment "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment/mocks"
@@ -136,7 +137,6 @@ func TestPaymentUseCase_CreatePaymentOrder(t *testing.T) {
 	}
 }
 
-/*
 func TestPaymentUseCase_NotifyPayment(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	paymentRepository := mock_gateways.NewMockPaymentRepositoryGateway(ctrl)
@@ -270,4 +270,3 @@ func createPaymentOrderDTO() dto.PaymentOrderDTO {
 		TotalAmount: 9.99,
 	}
 }
-*/
