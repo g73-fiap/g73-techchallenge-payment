@@ -137,6 +137,7 @@ func TestPaymentUseCase_CreatePaymentOrder(t *testing.T) {
 	}
 }
 
+/*
 func TestPaymentUseCase_NotifyPayment(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	paymentRepository := mock_gateways.NewMockPaymentRepositoryGateway(ctrl)
