@@ -55,13 +55,6 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          with:
-            args: >
-              -Dsonar.projectKey=IgorRamosBR_g73-techchallenge-payment
-              -Dsonar.organization=your_organization
-              -Dsonar.host.url=https://sonarcloud.io
-              -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-              -Dsonar.coverageReportPaths=coverage/coverage.out
 
 
   build:
