@@ -3,11 +3,10 @@ name: pipeline payment-ms
 on:
   push:
     branches:
-      - master
-      - pipeline
+      - '**'
   pull_request:
-    types: [ opened, synchronize, reopened ]
-  workflow_dispatch: { }
+    branches:
+      - master
 
 jobs:
   test-unit:
