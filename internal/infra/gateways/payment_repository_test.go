@@ -6,6 +6,7 @@ import (
 
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
+	mock_dynamodb "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/dynamodb/mocks"
 	"github.com/go-playground/assert/v2"
 	"go.uber.org/mock/gomock"
 )
