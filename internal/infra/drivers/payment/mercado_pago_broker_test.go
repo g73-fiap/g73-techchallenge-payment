@@ -1,6 +1,18 @@
 package payment
 
-/*
+import (
+	"errors"
+	"io"
+	"net/http"
+	"strings"
+	"testing"
+
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
+	mock_http "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/http/mocks"
+	"github.com/go-playground/assert/v2"
+	"go.uber.org/mock/gomock"
+)
+
 func TestMercadoPagoBroker_GeneratePaymentQRCode(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	httpClient := mock_http.NewMockHttpClient(ctrl)
@@ -117,7 +129,7 @@ func TestMercadoPagoBroker_GeneratePaymentQRCode(t *testing.T) {
 			want: want{
 				qrCodeResponse: PaymentQRCodeResponse{
 					QrData:       "mercadopago123456789",
-					StoreOrderId: "9876",
+					StoreOrderId: 9876,
 				},
 				err: nil,
 			},
@@ -152,4 +164,3 @@ func TestMercadoPagoBroker_GeneratePaymentQRCode(t *testing.T) {
 	}
 
 }
-*/
