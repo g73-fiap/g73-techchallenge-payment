@@ -25,6 +25,7 @@ jobs:
 
       - name: Run unit Tests
         run: |
+          go mod download github.com/bytedance/sonic
           go test -coverprofile=./cov.out ./...
 
       - name: Run Gosec Security Scanner
