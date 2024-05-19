@@ -14,42 +14,51 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: '1.20'
 
-      - name: Run tests
-        run: go test ./...
+      - name: Install Go dependencies
+        run: go mod download
+
+      - name: Run tests and generate coverage report
+        run: |
+          mkdir -p coverage
+          go test ./... -coverprofile=coverage/coverage.out
+          go tool cover -func=coverage/coverage.out -o coverage/coverage.txt
+          go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v3
         with:
           name: code-coverage-report
-          path: bin
+          path: coverage
 
   code-analisys: 
     runs-on: ubuntu-latest
     needs: test-unit
     steps:
-        - name: Clone repo
-          uses: actions/checkout@v2
+        - name: Checkout repo
+          uses: actions/checkout@v3
               
-        - name: Set golang
-          uses: actions/setup-go@v2
+        - name: Download coverage report
+          uses: actions/download-artifact@v3
           with:
-            go-version: '1.20'
-              
-        - name: Run tests
-          run: go test -coverprofile=./cov.out ./...
+            name: code-coverage-report
+            path: .
         
-        - name: Upload coverage to SonarCloud
-          uses: sonarsource/sonarcloud-github-action@master
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        - name: SonarCloud Scan
+          uses: SonarSource/sonarcloud-github-action@master
+          with:
+            args: >
+              -Dsonar.projectKey=IgorRamosBR_g73-techchallenge-payment
+              -Dsonar.organization=your_organization
+              -Dsonar.host.url=https://sonarcloud.io
+              -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+              -Dsonar.coverageReportPaths=coverage/coverage.out
 
 
   build:
