@@ -1,6 +1,16 @@
 package gateways
 
-/*
+import (
+	"errors"
+	"net/http"
+	"testing"
+
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
+	mock_http "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/http/mocks"
+	"github.com/go-playground/assert/v2"
+	"go.uber.org/mock/gomock"
+)
+
 func TestOrderClient_NotifyPaymentOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	httpClient := mock_http.NewMockHttpClient(ctrl)
@@ -89,4 +99,3 @@ func TestOrderClient_NotifyPaymentOrder(t *testing.T) {
 		assert.Equal(t, tt.want.err, err)
 	}
 }
-*/

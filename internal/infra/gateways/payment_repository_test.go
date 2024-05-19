@@ -1,6 +1,15 @@
 package gateways
 
-/*
+import (
+	"errors"
+	"testing"
+
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
+	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
+	"github.com/go-playground/assert/v2"
+	"go.uber.org/mock/gomock"
+)
+
 func TestPaymentRepository_SavePaymentOrder(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	dynamodbClient := mock_dynamodb.NewMockDynamoDBClient(ctrl)
@@ -169,4 +178,3 @@ func TestPaymentRepository_UpdatePaymentOrderStatus(t *testing.T) {
 		assert.Equal(t, tt.want.err, err)
 	}
 }
-*/
