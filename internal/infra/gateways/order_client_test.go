@@ -44,7 +44,7 @@ func TestOrderClient_NotifyPaymentOrder(t *testing.T) {
 				errors.New("failed to call order api, error: internal error"),
 			},
 			clientCall: clientCall{
-				orderApiUrl: "/order/123/status",
+				orderApiUrl: "/order/123456/status",
 				times:       1,
 				response:    &http.Response{},
 				err:         errors.New("internal error"),
@@ -60,7 +60,7 @@ func TestOrderClient_NotifyPaymentOrder(t *testing.T) {
 				errors.New("failed to call order api, status [500] non-2xx"),
 			},
 			clientCall: clientCall{
-				orderApiUrl: "/order/123/status",
+				orderApiUrl: "/order/1234/status",
 				times:       1,
 				response: &http.Response{
 					StatusCode: 500,
@@ -78,7 +78,7 @@ func TestOrderClient_NotifyPaymentOrder(t *testing.T) {
 				nil,
 			},
 			clientCall: clientCall{
-				orderApiUrl: "/order/123/status",
+				orderApiUrl: "/order/12345/status",
 				times:       1,
 				response: &http.Response{
 					StatusCode: 200,

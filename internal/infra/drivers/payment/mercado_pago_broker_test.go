@@ -129,7 +129,7 @@ func TestMercadoPagoBroker_GeneratePaymentQRCode(t *testing.T) {
 			want: want{
 				qrCodeResponse: PaymentQRCodeResponse{
 					QrData:       "mercadopago123456789",
-					StoreOrderId: 9876,
+					StoreOrderId: "9876",
 				},
 				err: nil,
 			},
