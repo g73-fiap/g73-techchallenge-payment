@@ -30,7 +30,6 @@ jobs:
           go test ./... -coverprofile=coverage/coverage.out
           go tool cover -func=coverage/coverage.out -o coverage/coverage.txt
           go tool cover -html=coverage/coverage.out -o coverage/coverage.html
-          go tool cover -html=coverage/coverage.out -o coverage/coverage.xml
 
       - name: Install gocover-cobertura
         run: go install github.com/t-yuki/gocover-cobertura@latest
