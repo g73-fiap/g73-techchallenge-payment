@@ -3,75 +3,42 @@ name: pipeline payment-ms
 on:
   push:
     branches:
-      - master
+      - main
       - pipeline
   pull_request:
-    branches:
-      - master
+    types: [ opened, synchronize, reopened ]
+  workflow_dispatch: { }
 
 jobs:
-  test-unit:
+  analyze:
+    name: Static-analysis
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
+      - uses: actions/checkout@v2
         with:
-          go-version: '1.20'
+          fetch-depth: 0
 
-      - name: Run tests
-        run: go test ./...
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v3
+      - name: Setup Go
+        uses: actions/setup-go@v2.1.3
         with:
-          name: code-coverage-report
-          path: bin
+          go-version: 1.16.x
 
-  code-analisys: 
-    runs-on: ubuntu-latest
-    needs: test-unit
-    steps:
-        - name: Clone repo
-          uses: actions/checkout@v2
-              
-        - name: Set golang
-          uses: actions/setup-go@v2
-          with:
-            go-version: '1.20'
-              
-        - name: Run tests
-          run: go test ./...
-        
-        - name: Upload coverage to SonarCloud
-          uses: sonarsource/sonarcloud-github-action@master
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
-  build:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
-    needs: code-analisys
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.20'
-
-      - name: Log in to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and Push the Docker image
+      - name: Run unit Tests
         run: |
-          docker build -t igorramos/g73-techchallenge-payment .
-          docker push igorramos/g73-techchallenge-payment      
+          go test -coverprofile=./cov.out ./...
+
+      - name: Run Gosec Security Scanner
+        run: |
+          go get github.com/securego/gosec/cmd/gosec
+          gosec -no-fail -fmt=sonarqube -out report.json ./...
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
 
 
 
