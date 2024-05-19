@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/entities"
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	drivers "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment"
 	mock_payment "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/payment/mocks"
@@ -271,3 +270,4 @@ func createPaymentOrderDTO() dto.PaymentOrderDTO {
 		TotalAmount: 9.99,
 	}
 }
+*/
