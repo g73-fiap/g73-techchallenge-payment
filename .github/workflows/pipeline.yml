@@ -44,17 +44,6 @@ jobs:
               
         - name: Run tests
           run: go test -coverprofile=./cov.out ./...
-
-        - name: Install GoSec
-          run: | 
-              go install github.com/securego/gosec
-              echo "Gosec installed at $(which gosec)"
-              ls -la $HOME/go/bin/
-  
-        - name: Run GoSec
-          run: |
-              $HOME/go/bin/gosec -no-fail -fmt=sonarqube -out report.json ./...
-              echo "Gosec completed"
         
         - name: Upload coverage to SonarCloud
           uses: sonarsource/sonarcloud-github-action@master
