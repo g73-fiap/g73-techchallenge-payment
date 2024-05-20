@@ -14,8 +14,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
@@ -41,8 +39,7 @@ jobs:
 
       - name: Run tests and generate coverage report
         run: |
-          go test ./...  -coverpkg=./... -coverprofile ./coverage.out
-          go tool cover -func ./coverage.out
+          go test ./... -coverprofile coverage.out -json > report.json
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
@@ -56,8 +53,6 @@ jobs:
     steps:
         - name: Checkout repo
           uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
               
         - name: Download coverage report
           uses: actions/download-artifact@v4
