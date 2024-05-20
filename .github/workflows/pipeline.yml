@@ -58,10 +58,10 @@ jobs:
             path: coverage
         
         - name: List coverage directory
-        run: ls -la coverage
+          run: ls -la coverage
 
         - name: Display coverage XML
-        run: cat coverage/coverage.xml      
+          run: cat coverage/coverage.xml      
 
         - name: SonarCloud Scan
           uses: SonarSource/sonarcloud-github-action@master
