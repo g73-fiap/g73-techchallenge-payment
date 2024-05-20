@@ -50,14 +50,12 @@ jobs:
     steps:
         - name: Checkout repo
           uses: actions/checkout@v3
-          with:
-            fetch-depth: 0 
               
         - name: Download coverage report
           uses: actions/download-artifact@v3
           with:
             name: code-coverage-report
-            path: .
+            path: coverage
         
         - name: SonarCloud Scan
           uses: SonarSource/sonarcloud-github-action@master
