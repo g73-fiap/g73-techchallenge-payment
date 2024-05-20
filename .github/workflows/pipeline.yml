@@ -28,9 +28,8 @@ jobs:
           path: bin
 
   code-analisys: 
-      needs: test-unit
-      name: SonarCloud Trigger
       runs-on: ubuntu-latest
+      needs: test-unit
       steps:
         - name: Clone Repository
           uses: actions/checkout@master
