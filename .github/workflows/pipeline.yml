@@ -30,7 +30,7 @@ jobs:
 
       - name: Cache Go modules
         uses: actions/cache@v2
-          with:
+        with:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
