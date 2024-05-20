@@ -41,17 +41,8 @@ jobs:
 
       - name: Run tests and generate coverage report
         run: |
-          mkdir -p coverage
-          go test ./... -coverprofile=coverage/coverage.out
-          go tool cover -html=coverage/coverage.out -o coverage/coverage.html
-
-      - name: Install gocover-cobertura
-        run: go install github.com/t-yuki/gocover-cobertura@latest
-  
-      - name: Convert coverage report to Cobertura format
-        run: |
-            mkdir -p coverage
-            $HOME/go/bin/gocover-cobertura < coverage/coverage.out > coverage/coverage.xml
+          go test ./...  -coverpkg=./... -coverprofile ./coverage.out
+          go tool cover -func ./coverage.out
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v3

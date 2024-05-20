@@ -1,21 +1,22 @@
 {
 	"info": {
 		"_postman_id": "b60f711b-4d2c-4995-93c8-13f4e8d4df62",
-		"name": "g37-lanches",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"name": "g73-techchallenge-fase-4",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17297669"
 	},
 	"item": [
 		{
-			"name": "Customer",
+			"name": "authorize",
 			"item": [
 				{
-					"name": "Create customer",
+					"name": "Authorize",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Igor\",\n    \"cpf\": \"15592747780\",\n    \"email\": \"igor@gmail.com\"\n}",
+							"raw": "{\n    \"name\": \"Alvaro\",\n    \"cpf\": \"12345678900\",\n    \"email\": \"alvaro@gmail.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -23,65 +24,50 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/v1/customers",
+							"raw": "https://fzmgicpudl.execute-api.us-east-1.amazonaws.com/v1/authorize",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"fzmgicpudl",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"v1",
-								"customers"
+								"authorize"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Get Customer by CPF",
+					"name": "User",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cpf\": \"12345678900\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "localhost:8080/v1/customers?cpf=15592747780",
+							"raw": "https://fzmgicpudl.execute-api.us-east-1.amazonaws.com/v1/user",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"fzmgicpudl",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
 							],
-							"port": "8080",
 							"path": [
 								"v1",
-								"customers"
-							],
-							"query": [
-								{
-									"key": "cpf",
-									"value": "15592747780"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Customer by id",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/v1/customers",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"v1",
-								"customers"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "2",
-									"disabled": true
-								}
+								"user"
 							]
 						}
 					},
@@ -90,7 +76,7 @@
 			]
 		},
 		{
-			"name": "Product",
+			"name": "order",
 			"item": [
 				{
 					"name": "Create product",
@@ -122,11 +108,23 @@
 				},
 				{
 					"name": "Get All Products",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "localhost:8080/v1/products?limit=2&offset=1",
+							"raw": "localhost:8080/v1/products",
 							"host": [
 								"localhost"
 							],
@@ -138,11 +136,13 @@
 							"query": [
 								{
 									"key": "limit",
-									"value": "2"
+									"value": "2",
+									"disabled": true
 								},
 								{
 									"key": "offset",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								}
 							]
 						}
@@ -155,7 +155,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/v1/products?category=Acompanhamento&limit=2&offset=1",
+							"raw": "localhost:8080/v1/products?category=Acompanhamento",
 							"host": [
 								"localhost"
 							],
@@ -171,11 +171,13 @@
 								},
 								{
 									"key": "limit",
-									"value": "2"
+									"value": "2",
+									"disabled": true
 								},
 								{
 									"key": "offset",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								}
 							]
 						}
@@ -242,12 +244,7 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Order",
-			"item": [
+				},
 				{
 					"name": "Create order (CUSTOM_COMBO)",
 					"request": {
@@ -255,7 +252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"items\": [\n        {\n            \"productIds\": [2, 3],\n            \"quantity\": 2,\n            \"type\": \"CUSTOM_COMBO\"\n        }\n    ],\n    \"customerId\": 1,\n    \"coupon\": \"APP10\",\n    \"status\": \"CREATED\"\n}",
+							"raw": "{\n    \"items\": [\n        {\n            \"productId\": 2,\n            \"quantity\": 2,\n            \"type\": \"CUSTOM_COMBO\"\n        }\n    ],\n    \"coupon\": \"APP10\",\n    \"customercpf\": \"12345678900\",\n    \"status\": \"CREATED\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -283,7 +280,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"items\": [\n        {\n            \"productId\": 3,\n            \"quantity\": 1,\n            \"type\": \"UNIT\"\n        },\n        {\n            \"productId\": 4,\n            \"quantity\": 1,\n            \"type\": \"UNIT\"\n        }\n    ],\n    \"customerId\": 1,\n    \"coupon\": \"APP10\",\n    \"status\": \"CREATED\"\n}",
+							"raw": "{\n    \"Items\": [\n        {\n            \"ProductId\": 1,\n            \"Quantity\": 1,\n            \"Type\": \"UNIT\"\n        }\n    ],\n    \"Coupon\": \"APP10\",\n    \"Customercpf\": \"12345678900\",\n    \"Status\": \"CREATED\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -317,7 +314,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "localhost:8080/v1/orders?limit=2&offset=1",
+							"raw": "localhost:8080/v1/orders",
 							"host": [
 								"localhost"
 							],
@@ -329,11 +326,13 @@
 							"query": [
 								{
 									"key": "limit",
-									"value": "2"
+									"value": "2",
+									"disabled": true
 								},
 								{
 									"key": "offset",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								}
 							]
 						}
@@ -372,7 +371,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": null
+									"value": ""
 								}
 							]
 						}
@@ -386,7 +385,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"status\": \"CREATED|PAID|RECEIVED|IN_PROGRESS|READY|DONE\"\r\n}",
+							"raw": "{\r\n    \"status\": \"CREATED\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -415,26 +414,36 @@
 									"key": "offset",
 									"value": "1",
 									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "\"CREATED|PAID|RECEIVED|IN_PROGRESS|READY|DONE\"",
+									"disabled": true
 								}
 							],
 							"variable": [
 								{
 									"key": "id",
-									"value": null
+									"value": ""
 								}
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "payment",
+			"item": [
 				{
-					"name": "Update payment status",
+					"name": "payment Notify",
 					"request": {
-						"method": "PUT",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\t\"Id\": \"exemplo-id\",\r\n\t\t\"LiveMode\": true,\r\n\t\t\"Type\": \"payment\",\r\n\t\t\"DateCreated\": \"2024-01-29T12:00:00Z\",\r\n\t\t\"UserId\": 1,\r\n\t\t\"ApiVersion\": \"v1\",\r\n\t\t\"Action\": \"paymentAction\",\r\n\t\t\"Data\": \"Id\"\r\n\t}",
+							"raw": "{\n    \"description\": \"Combo 1\",\n    \"merchantOrder\": 7,\n    \"paymentId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -442,33 +451,121 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/v1/orders/:id/payment",
+							"raw": "localhost:8081/v1/payment/:id/notify",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8081",
 							"path": [
 								"v1",
-								"orders",
+								"payment",
 								":id",
-								"payment"
-							],
-							"query": [
-								{
-									"key": "limit",
-									"value": "2",
-									"disabled": true
-								},
-								{
-									"key": "offset",
-									"value": "1",
-									"disabled": true
-								}
+								"notify"
 							],
 							"variable": [
 								{
 									"key": "id",
-									"value": null
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "payment Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderId\": 7,\n    \"customerCPF\": \"12345678900\",\n    \"Items\": [\n        {\n            \"quantity\": 1,\n            \"product\": {\n                \"name\": \"Combo 1\",\n                \"skuId\": \"000005\",\n                \"description\": \"Lanche, acompanhament e bebida sortida\",\n                \"category\": \"Acompanhamento\",\n                \"type\": \"COMBO\",\n                \"price\": 40.00\n            }\n        }\n    ],\n    \"TotalAmount\": 40.00,\n    \"QRCode\": \"00020101021243650016COM.MERCADOLIBRE02013063638f1192a-5fd1-4180-a180-8bcae3556bc35204000053039865802BR5925IZABELAAAADEMELO6007BARUERI62070503***63040B6D\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8081/v1/paymentOrder",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"v1",
+								"paymentOrder"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "production",
+			"item": [
+				{
+					"name": "Get Orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8082/v1/orders",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"v1",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Orders Status",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"CREATED\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8082/v1/orders/:id/status",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"v1",
+								"orders",
+								":id",
+								"status"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
 								}
 							]
 						}

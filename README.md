@@ -82,7 +82,7 @@ go build -o g73-techchallenge-payment ./cmd/g73-techchallenge-payment
 
 - **PUT /api/payment/notify/{orderId}/{paymentId}:** Notifica o status do pagamento para um pedido específico.
 
-## Documentação
+## Documentação e Coverage
 [Documentation](https://github.com/IgorRamosBR/g73-techchallenge-payment/tree/master/docs)
 
 
