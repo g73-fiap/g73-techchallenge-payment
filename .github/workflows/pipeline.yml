@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: code-coverage-report
-          path: coverage
+          path: .
 
   code-analisys: 
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
           uses: actions/download-artifact@v3
           with:
             name: code-coverage-report
-            path: coverage
+            path: .
         
         - name: List coverage directory
           run: ls -la coverage
