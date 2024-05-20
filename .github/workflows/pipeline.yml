@@ -39,7 +39,7 @@ jobs:
           with:
             name: code-coverage-report
             path: bin
-       - name: Analyze with SonarCloud
+       - name: Analyze with SonarCloudd
           uses: sonarsource/sonarcloud-github-action@master
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
