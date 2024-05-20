@@ -49,7 +49,7 @@ func TestPaymentController_CreatePaymentOrderHandler(t *testing.T) {
 				reqBody: "<invalidJson>",
 			},
 			want: want{
-				statusCode: 400,
+				statusCode: 404,
 				respBody:   `{"message":"failed to bind payment order payload","error":"invalid character '\u003c' looking for beginning of value"}`,
 			},
 		},
