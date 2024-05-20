@@ -9,7 +9,7 @@ import (
 
 	"github.com/IgorRamosBR/g73-techchallenge-payment/internal/core/usecases/dto"
 	mock_http "github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/drivers/http/mocks"
-	"github.com/stretchr/testify/assert"
+	"github.com/go-playground/assert/v2"
 	"go.uber.org/mock/gomock"
 )
 

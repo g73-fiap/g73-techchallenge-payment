@@ -1,0 +1,122 @@
+openapi: 3.0.3
+info:
+  title: API de Realização de Pagamentos -  g73-techchallenge-payment
+  description: |- 
+    Este é um microsserviço responsável por gerenciar pagamentos de pedidos em uma lanchonete. Ele oferece endpoints para criar novos pedidos de pagamento, notificar o status do pagamento e interagir com um serviço de pagamento de terceiros.
+
+    **Funcionalidades Principais:**
+
+      - Criar novos pedidos de pagamento.
+      - Notificar o status do pagamento.
+      - Gerar QR code de pagamento usando um serviço de pagamento de terceiros.
+      - Armazenar informações de pedidos de pagamento no DynamoDB.
+    
+    links úteis:
+    - [Repositório do Projeto ](https://github.com/IgorRamosBR/g73-techchallenge-payment)
+  version: 1.0.11
+servers:
+  - url: http://localhost:8081/v1/
+tags:
+  - name: payment 
+    description: Pagamento sobre as ordens de pedido
+
+
+paths:
+  /payment/{id}/status:
+   post:
+      tags:
+        - payment
+      summary: Notificar Status do pagamento
+      description: Atualizar status de pagamento do pedido
+      operationId: updateStatusOrder
+      parameters: 
+        - name: id
+          in: path
+          description: ID do pedido
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: "CREATED|PAID|RECEIVED|IN_PROGRESS|READY|DONE"
+                merchantOrder:
+                  type: integer
+                  example: 1
+                paymentId:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: 'OK'
+          
+          
+  /paymentOrder:
+   post:
+      tags:
+        - payment
+      summary: Realizar pagamento
+      description: Realizar pagamento
+      operationId: Criar ordem de pagamento
+      requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      orderId:
+                        type: integer
+                        example: 7
+                      customerCPF:
+                        type: string
+                        example: "12345678900"
+                      Items:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            quantity:
+                              type: integer
+                              example: 1
+                            product:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                  example: "Combo 1"
+                                skuId:
+                                  type: string
+                                  example: "000005"
+                                description:
+                                  type: string
+                                  example: "Lanche, acompanhament e bebida sortida"
+                                category:
+                                  type: string
+                                  example: "Acompanhamento"
+                                type:
+                                  type: string
+                                  example: "COMBO"
+                                price:
+                                  type: number
+                                  format: float
+                                  example: 40.00
+                      TotalAmount:
+                        type: number
+                        format: float
+                        example: 40.00
+                      QRCode:
+                        type: string
+                        example: "00020101021243650016COM.MERCADOLIBRE02013063638f1192a-5fd1-4180-a180-8bcae3556bc35204000053039865802BR5925IZABELAAAADEMELO6007BARUERI62070503***63040B6D"
+                  
+      responses:
+        '200':
+          description: 'OK'
