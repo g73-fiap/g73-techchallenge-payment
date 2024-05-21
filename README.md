@@ -4,6 +4,28 @@
 
 Este é um microsserviço responsável por gerenciar pagamentos de pedidos em uma lanchonete. Ele oferece endpoints para criar novos pedidos de pagamento, notificar o status do pagamento e interagir com um serviço de pagamento de terceiros.
 
+## Test coverage
+
+### Como executar
+``` bash
+go test ./...  -coverpkg=./... -coverprofile ./coverage.out
+go tool cover -func ./coverage.out
+```
+
+### Resultado
+```bash
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/mocks/payment_repository.go:52:        SavePaymentOrder                100.0%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/mocks/payment_repository.go:58:        UpdatePaymentOrderStatus        100.0%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/mocks/payment_repository.go:66:        UpdatePaymentOrderStatus        100.0%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/order_client.go:21:                    NewOrderClient                  100.0%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/order_client.go:28:                    NotifyPaymentOrder              88.9%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/payment_repository.go:24:              NewPaymentRepositoryGateway     100.0%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/payment_repository.go:31:              SavePaymentOrder                87.5%
+github.com/IgorRamosBR/g73-techchallenge-payment/internal/infra/gateways/payment_repository.go:47:              UpdatePaymentOrderStatus        90.0%
+total:                                                                                                          (statements)                    80.2%
+```
+
+Total: 80.2%
 
 ## Tecnologias Utilizadas
 
