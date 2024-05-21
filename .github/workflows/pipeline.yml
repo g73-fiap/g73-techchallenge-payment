@@ -51,8 +51,8 @@ jobs:
 
       - name: Build and Push the Docker image
         run: |
-          docker build -t igorramos/g73-techchallenge-payment .
-          docker push igorramos/g73-techchallenge-payment      
+          docker build -t igorramos/g73-payment-api .
+          docker push igorramos/g73-payment-api      
 
 
 
