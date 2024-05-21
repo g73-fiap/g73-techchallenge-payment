@@ -12,6 +12,7 @@ spec:
       labels:
         app: g73-payment-api
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: g73-payment-api
           image: igorramos/g73-payment-api:production
