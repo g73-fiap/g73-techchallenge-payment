@@ -16,20 +16,21 @@ spec:
       containers:
         - name: g73-payment-api
           image: igorramos/g73-payment-api:production
-          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
             - name: ENVIRONMENT
-              value: prod
+              value: local
             - name: AUTHORIZER_URL
               value: 'https://fzmgicpudl.execute-api.us-east-1.amazonaws.com/v1/authorize'
             - name: ORDER_API_URL
-              value: ''
+              value: 'http://localhost:8080/v1/orders'
             - name: DEFAULT_TIMEOUT
               value: '500ms'
             - name: PORT
               value: '8081'
+            - name: CONFIG_DIR_PATH
+              value: '../configs'
                 
           resources:
             limits:
