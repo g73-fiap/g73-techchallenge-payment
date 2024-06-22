@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: g73-payment-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: g73-payment-api
+  template:
+    metadata:
+      labels:
+        app: g73-payment-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: g73-payment-api
+          image: igorramos/g73-payment-api
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ENVIRONMENT
+              value: prod
+            - name: AUTHORIZER_URL
+              value: 'https://fzmgicpudl.execute-api.us-east-1.amazonaws.com/v1/authorize'
+            - name: ORDER_API_URL
+              value: 'http://localhost:8080/v1/orders'
+            - name: DEFAULT_TIMEOUT
+              value: '500ms'
+            - name: PORT
+              value: '8081'
+            - name: CONFIG_DIR_PATH
+              value: '../configs'
+                
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.25"
+              memory: "256Mi"

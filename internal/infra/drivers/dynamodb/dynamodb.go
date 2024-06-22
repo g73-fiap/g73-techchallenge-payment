@@ -2,10 +2,13 @@ package dynamodb
 
 import (
 	"context"
+	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/sirupsen/logrus"
 )
 
 type DynamoDBClient interface {
@@ -23,8 +26,15 @@ func NewDynamoDBClient(client *dynamodb.Client) *dynamoDBClient {
 }
 
 func (d *dynamoDBClient) PutItem(tableName string, item map[string]types.AttributeValue) error {
-	_, err := d.client.PutItem(context.TODO(), &dynamodb.PutItemInput{
-		TableName: &tableName,
+	output, err := d.client.ListTables(context.TODO(), &dynamodb.ListTablesInput{})
+	if err != nil {
+		return err
+	}
+
+	logrus.Info(strings.Join(output.TableNames, ","))
+
+	_, err = d.client.PutItem(context.TODO(), &dynamodb.PutItemInput{
+		TableName: aws.String(tableName),
 		Item:      item,
 	})
 	if err != nil {

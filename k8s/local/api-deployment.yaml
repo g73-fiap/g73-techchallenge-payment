@@ -15,9 +15,9 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: g73-payment-api
-          image: igorramos/g73-payment-api:production
+          image: igorramos/g73-payment-api
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           env:
             - name: ENVIRONMENT
               value: local
@@ -31,6 +31,14 @@ spec:
               value: '8081'
             - name: CONFIG_DIR_PATH
               value: '../configs'
+            - name: DYNAMODB_ENDPOINT
+              value: 'http://dynamodb:8000'
+            - name: AWS_ACCESS_KEY_ID
+              value: 'DUMMYIDEXAMPLE'
+            - name: AWS_SECRET_ACCESS_KEY
+              value: 'DUMMYEXAMPLEKEY'
+            - name: AWS_REGION
+              value: 'us-east-1'
                 
           resources:
             limits:

@@ -5,4 +5,3 @@ paymentBroker:
 
 paymentRepository:
   table: Payment
-  endpoint: http://localhost:8000/
