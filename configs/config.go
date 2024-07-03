@@ -88,7 +88,7 @@ func (c *Config) extractConfigVars() (AppConfig, error) {
 	appConfig.SponsorId = c.viper.GetString("paymentBroker.sponsorId")
 
 	appConfig.PaymentTable = c.viper.GetString("paymentRepository.table")
-	appConfig.PaymentTableEndpoint = c.viper.GetString("paymentRepository.endpoint")
+	appConfig.PaymentTableEndpoint = c.viper.GetString("DYNAMODB_ENDPOINT")
 
 	appConfig.OrderApiUrl = c.viper.GetString("ORDER_API_URL")
 	appConfig.ProductionApiUrl = c.viper.GetString("PRODUCTION_API_URL")

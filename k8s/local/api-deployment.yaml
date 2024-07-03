@@ -15,19 +15,30 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: g73-payment-api
-          image: igorramos/g73-payment-api:production
-          imagePullPolicy: Always
+          image: igorramos/g73-payment-api
           ports:
-            - containerPort: 8080
+            - containerPort: 8081
           env:
             - name: ENVIRONMENT
-              value: prod
+              value: local
             - name: AUTHORIZER_URL
               value: 'https://fzmgicpudl.execute-api.us-east-1.amazonaws.com/v1/authorize'
             - name: ORDER_API_URL
-              value: ''
+              value: 'http://localhost:8080/v1/orders'
             - name: DEFAULT_TIMEOUT
               value: '500ms'
+            - name: PORT
+              value: '8081'
+            - name: CONFIG_DIR_PATH
+              value: '../configs'
+            - name: DYNAMODB_ENDPOINT
+              value: 'http://dynamodb:8000'
+            - name: AWS_ACCESS_KEY_ID
+              value: 'DUMMYIDEXAMPLE'
+            - name: AWS_SECRET_ACCESS_KEY
+              value: 'DUMMYEXAMPLEKEY'
+            - name: AWS_REGION
+              value: 'us-east-1'
                 
           resources:
             limits:
@@ -36,12 +47,3 @@ spec:
             requests:
               cpu: "0.25"
               memory: "256Mi"
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: role
-                operator: In
-                values:
-                - general

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dynamodb
+  name: dynamodb
+spec:
+  automountServiceAccountToken: false
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dynamodb
+  template:
+    metadata:
+      labels:
+        app: dynamodb
+    spec:
+      containers:
+      - image: amazon/dynamodb-local
+        name: dynamodb-local
+        ports:
+        - containerPort: 8000
+        resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+            requests:
+              cpu: "0.25"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: dynamodb
+  name: dynamodb
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: dynamodb
